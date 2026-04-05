@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: #e8ecf2;
+  --muted: #94a3b8;
+}
+
+body {
+  color: var(--foreground);
+  background: linear-gradient(160deg, #0a0e14 0%, #0f1419 45%, #111827 100%);
+  min-height: 100vh;
+}
