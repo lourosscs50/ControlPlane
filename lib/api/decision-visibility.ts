@@ -64,6 +64,12 @@ export type ExecutionVisibilityExtension = {
   startedAtUtc: string;
 };
 
+/** Additive: when backends expose discrete options (camelCase JSON). */
+export type DecisionOptionSummary = {
+  optionId: string;
+  summary?: string | null;
+};
+
 export type DecisionVisibilityResponse = {
   decisionId: string;
   decisionCategory: string;
@@ -72,6 +78,15 @@ export type DecisionVisibilityResponse = {
   status: string;
   input: { normalizedSummary: string };
   output: { resultSummary: string };
+  /**
+   * Additive: selected option / outcome id when the visibility contract includes it.
+   * Omitted by current SignalForge responses — UI treats omission as “not exposed”.
+   */
+  selectedOptionId?: string | null;
+  /**
+   * Additive: enumerated options when the contract includes them (stable server order).
+   */
+  decisionOptions?: DecisionOptionSummary[] | null;
   policyProfileKey: string | null;
   strategyPathKey: string | null;
   providerModelSummary: string | null;

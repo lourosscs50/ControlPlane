@@ -11,8 +11,34 @@ export function DecisionInsightSummaryCard({
         Insight summary
       </h2>
       <p className="mt-1 text-xs text-slate-600">
-        Bounded explanation surface from the backend — no chain-of-thought or raw prompts.
+        Bounded explanation surface from the backend — no chain-of-thought or raw prompts. Chips
+        below are only shown when an envelope field supports them.
       </p>
+      {insight.stateBadges.length ? (
+        <ul className="mt-4 flex flex-wrap gap-2" aria-label="Envelope-backed state indicators">
+          {insight.stateBadges.map((b, i) => (
+            <li
+              key={`${b.label}-${b.basisNote ?? i}`}
+              className="rounded-md border border-surface-border bg-black/35 px-2.5 py-1"
+            >
+              <span className="text-xs font-medium text-slate-200">{b.label}</span>
+              {b.basisNote ? (
+                <span className="mt-0.5 block font-mono text-[10px] text-slate-500">
+                  {b.basis === "envelope" ? "Source: " : "Note: "}
+                  {b.basisNote}
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {insight.operatorLines.length ? (
+        <ul className="mt-4 list-inside list-disc space-y-1 text-sm text-slate-400">
+          {insight.operatorLines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ) : null}
       <div className="mt-4 space-y-3 text-sm">
         <div className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:items-baseline">
           <div className="text-slate-500">Explanation available</div>

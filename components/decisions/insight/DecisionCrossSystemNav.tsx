@@ -12,7 +12,8 @@ export function DecisionCrossSystemNav({
         Cross-system navigation
       </h2>
       <p className="mt-1 text-xs text-slate-600">
-        Links use explicit ids from this decision row only. No inferred ChronoFlow or A.I.L. ids.
+        Entity-scoped links use explicit ids from this decision row only (no inferred ChronoFlow or
+        A.I.L. ids). The analytics entry is a general hub — it is not auto-filtered to this decision.
       </p>
       {!links.length ? (
         <p className="mt-4 text-sm text-slate-500">

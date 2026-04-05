@@ -24,7 +24,7 @@ export function DecisionIntelligenceLayer({
   return (
     <div className="mt-8 space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
-        <DecisionOutcomeCard outcome={vm.outcome} />
+        <DecisionOutcomeCard outcome={vm.outcome} traceIdentifiers={vm.traceIdentifiers} />
         <DecisionInsightSummaryCard insight={vm.insightSummary} />
       </div>
       <DecisionInfluencesSection influences={vm.influences} />

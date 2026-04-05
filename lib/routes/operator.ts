@@ -12,6 +12,11 @@ export function decisionDetailPath(decisionId: string): string {
   return `/decisions/${encodeURIComponent(decisionId)}`;
 }
 
+/** Read-only operations analytics hub (date-range KPIs; not auto-filtered to a single decision). */
+export function analyticsOverviewPath(): string {
+  return "/analytics";
+}
+
 /** A.I.L. execution visibility snapshot (read-only); id is the A.I.L. execution instance id. */
 export function ailExecutionDetailPath(executionInstanceId: string): string {
   return `/ail/executions/${encodeURIComponent(executionInstanceId)}`;
