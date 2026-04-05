@@ -22,7 +22,7 @@ export function DecisionOutcomeCard({
           <CopyableId value={outcome.decisionId} copyLabel="Copy decision id" />
         </div>
         <div className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:items-baseline">
-          <div className="text-sm text-slate-500">Selected option id</div>
+          <div className="text-sm text-slate-500">Selected option</div>
           <SelectedOptionBlock selected={outcome.selectedOption} />
         </div>
         <div className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:items-baseline">

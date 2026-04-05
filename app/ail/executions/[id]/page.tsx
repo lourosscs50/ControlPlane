@@ -13,6 +13,8 @@ import { getAilConfig, getSignalForgeConfig } from "@/lib/env";
 
 import Link from "next/link";
 import { CopyableId } from "@/components/operator/CopyableId";
+import { EmptyStateNotice } from "@/components/operator/EmptyStateNotice";
+import { OperatorPanel } from "@/components/operator/OperatorPanel";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -110,34 +112,38 @@ export default async function AilExecutionVisibilityPage({ params }: PageProps) 
         </div>
       </details>
 
-      {/* Related SignalForge decisions panel */}
       <div className="mt-8">
-        <section className="rounded-xl border border-surface-border bg-surface-raised/50 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-4">
-            Related SignalForge decisions
-          </h2>
+        <OperatorPanel title="Related SignalForge decisions" tone="related">
           {!traceId ? (
-            <p className="text-sm text-slate-500">
-              No related SignalForge decisions available because this execution has no trace identifier.
-            </p>
+            <EmptyStateNotice variant="no_trace_id">
+              This A.I.L. execution visibility row has no <code className="text-slate-400">traceId</code>
+              , so ControlPlane cannot query SignalForge by trace thread. This is not the same as
+              &quot;no decisions exist.&quot;
+            </EmptyStateNotice>
           ) : !sfCfg.baseUrl || !sfCfg.apiToken ? (
-            <p className="text-sm text-slate-500">
-              Configure SignalForge base URL and{" "}
+            <EmptyStateNotice variant="not_configured">
+              Set <code className="rounded bg-black/30 px-1">SIGNALFORGE_API_BASE_URL</code> and{" "}
               <code className="rounded bg-black/30 px-1">SIGNALFORGE_API_TOKEN</code> to load
-              decisions filtered by <code className="text-slate-400">traceId</code>.
-            </p>
+              decisions filtered by <code className="text-slate-200">traceId</code>.
+            </EmptyStateNotice>
           ) : relatedError ? (
-            <p className="text-sm text-amber-200">
-              Failed to load related SignalForge decisions: {String(relatedError)}
-            </p>
+            <EmptyStateNotice variant="source_unavailable">
+              The SignalForge request failed; details below. This is not the same as an empty result
+              set.
+              <span className="mt-2 block font-mono text-xs opacity-90">{String(relatedError)}</span>
+            </EmptyStateNotice>
           ) : !relatedPage?.items.length ? (
-            <p className="text-sm text-slate-500">
-              No related SignalForge decisions were found for this trace identifier.
-            </p>
+            <EmptyStateNotice variant="no_results_found">
+              No related entities found for this trace identifier — the SignalForge query succeeded
+              but returned no decision rows for this trace thread.
+            </EmptyStateNotice>
           ) : (
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {relatedPage.items.map((sf) => (
-                <li key={sf.decisionId} className="rounded-lg border border-surface-border bg-black/20 px-4 py-3">
+                <li
+                  key={sf.decisionId}
+                  className="rounded-lg border border-surface-border/80 bg-black/15 px-4 py-3"
+                >
                   <div className="flex flex-wrap items-center gap-2">
                     <CopyableId
                       value={sf.decisionId}
@@ -148,7 +154,7 @@ export default async function AilExecutionVisibilityPage({ params }: PageProps) 
                       <span className="text-xs text-slate-500">{sf.decisionType}</span>
                     )}
                     {sf.explanation?.summaryText && (
-                      <span className="text-xs text-slate-400 ml-2">
+                      <span className="text-xs text-slate-400 ml-2 line-clamp-2">
                         {sf.explanation.summaryText}
                       </span>
                     )}
@@ -157,7 +163,7 @@ export default async function AilExecutionVisibilityPage({ params }: PageProps) 
               ))}
             </ul>
           )}
-        </section>
+        </OperatorPanel>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AilExecutionExtensionPanel } from "@/components/decisions/AilExecutionExtensionPanel";
 import { DecisionIntelligenceLayer } from "@/components/decisions/insight/DecisionIntelligenceLayer";
 import { DecisionVisibilityPanels } from "@/components/decisions/DecisionVisibilityPanels";
+import { EmptyStateNotice } from "@/components/operator/EmptyStateNotice";
 import { ErrorState } from "@/components/operator/ErrorState";
 import { getDecision } from "@/lib/api/signalforge";
 import { getSignalForgeConfig } from "@/lib/env";
@@ -33,14 +34,13 @@ export default async function DecisionDetailPage({ params }: PageProps) {
     return (
       <div>
         <BackLink />
-        <p
-          className="mt-6 rounded-lg border border-amber-900/60 bg-amber-950/30 px-4 py-3 text-sm text-amber-200"
-          role="status"
-        >
-          Configure{" "}
-          <code className="rounded bg-black/40 px-1">SIGNALFORGE_API_TOKEN</code>{" "}
-          to load decision detail.
-        </p>
+        <div className="mt-6 max-w-2xl">
+          <EmptyStateNotice variant="not_configured">
+            Set{" "}
+            <code className="rounded bg-black/40 px-1">SIGNALFORGE_API_TOKEN</code> to load
+            SignalForge decision detail.
+          </EmptyStateNotice>
+        </div>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default async function DecisionDetailPage({ params }: PageProps) {
 
       <header className="mt-4 border-b border-surface-border pb-6">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Decision detail
+          SignalForge decision visibility
         </p>
         <h1 className="mt-2 break-all font-mono text-xl text-white sm:text-2xl">
           {d.decisionType}

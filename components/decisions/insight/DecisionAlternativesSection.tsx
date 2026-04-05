@@ -27,8 +27,9 @@ export function DecisionAlternativesSection({
       <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Alternatives</h2>
       <p className="mt-1 text-xs text-slate-600">
         Options below are echoed from <code className="text-slate-500">decisionOptions</code> in API
-        order. Selected row uses <code className="text-slate-500">selectedOptionId</code> when it
-        matches — no ranking or scoring is applied in ControlPlane.
+        order. The <strong className="font-medium text-slate-400">selected option</strong> row is
+        highlighted when <code className="text-slate-500">selectedOptionId</code> matches an option
+        id — no ranking or scoring is applied in ControlPlane.
       </p>
       {!options.length ? (
         <p className="mt-4 text-sm text-amber-200/90" role="status">
@@ -51,7 +52,7 @@ export function DecisionAlternativesSection({
                   <span className="font-mono text-sm text-white">{o.optionId}</span>
                   {isSel ? (
                     <span className="rounded border border-surface-border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-muted">
-                      Selected
+                      Selected option
                     </span>
                   ) : null}
                 </div>

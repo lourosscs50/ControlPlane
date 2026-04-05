@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CopyableId } from "@/components/operator/CopyableId";
 import { CorrelationLink } from "@/components/operator/CorrelationLink";
+import { OperatorPanel } from "@/components/operator/OperatorPanel";
 import type { DecisionVisibilityResponse } from "@/lib/api/decision-visibility";
 import {
   alertEntityIdFromDecision,
@@ -10,23 +11,6 @@ import { decisionsListForSignalEntity } from "@/lib/identifiers/signalforge-deci
 import type { DecisionTraceSemantics } from "@/lib/operator/decision-trace-semantics";
 
 export type { DecisionTraceSemantics } from "@/lib/operator/decision-trace-semantics";
-
-function Panel({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-xl border border-surface-border bg-surface-raised/50 p-5">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {title}
-      </h2>
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
@@ -87,7 +71,7 @@ export function DecisionVisibilityPanels({
 
   return (
     <div className="mt-8 grid gap-6 lg:grid-cols-2">
-      <Panel title="Summary">
+      <OperatorPanel title="Summary">
         <div className="space-y-3">
           <div className="grid gap-1 sm:grid-cols-[11rem_1fr] sm:items-start">
             <div className="text-sm text-slate-500">Decision id</div>
@@ -98,9 +82,9 @@ export function DecisionVisibilityPanels({
           <Field label="Status" value={d.status} />
           <Field label="Occurred (UTC)" value={formatIso(d.occurredAtUtc)} />
         </div>
-      </Panel>
+      </OperatorPanel>
 
-      <Panel title="Trace">
+      <OperatorPanel title="Trace">
         <div className="space-y-3 text-sm">
           <div className="rounded-lg border border-slate-800/80 bg-black/20 p-3 text-xs text-slate-500">
             <p className="font-medium text-slate-400">
@@ -219,21 +203,21 @@ export function DecisionVisibilityPanels({
             </ul>
           </div>
         </div>
-      </Panel>
+      </OperatorPanel>
 
-      <Panel title="Input summary">
+      <OperatorPanel title="Input summary">
         <p className="break-words text-sm text-slate-300 whitespace-pre-wrap">
           {inputText}
         </p>
-      </Panel>
+      </OperatorPanel>
 
-      <Panel title="Output summary">
+      <OperatorPanel title="Output summary">
         <p className="break-words text-sm text-slate-300 whitespace-pre-wrap">
           {outputText}
         </p>
-      </Panel>
+      </OperatorPanel>
 
-      <Panel title="Explanation">
+      <OperatorPanel title="Explanation">
         <div className="space-y-3 text-sm">
           <Field
             label="Available"
@@ -280,9 +264,9 @@ export function DecisionVisibilityPanels({
             }
           />
         </div>
-      </Panel>
+      </OperatorPanel>
 
-      <Panel title="Metadata">
+      <OperatorPanel title="Metadata">
         <div className="space-y-3">
           <Field
             label="Recommended downstream"
@@ -293,7 +277,7 @@ export function DecisionVisibilityPanels({
           <Field label="Provider label" value={d.providerModelSummary ?? "—"} />
           <Field label="Actor" value={d.auditActorUserId ?? "—"} />
         </div>
-      </Panel>
+      </OperatorPanel>
     </div>
   );
 }

@@ -1,21 +1,5 @@
 import type { ExecutionVisibilityExtension } from "@/lib/api/decision-visibility";
-
-function Panel({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-xl border border-surface-border bg-surface-raised/50 p-5">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {title}
-      </h2>
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
+import { OperatorPanel } from "@/components/operator/OperatorPanel";
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
@@ -52,7 +36,7 @@ export function AilExecutionExtensionPanel({
       : "—";
 
   return (
-    <Panel title="A.I.L. execution metadata (bounded)">
+    <OperatorPanel title="A.I.L. execution metadata (bounded)">
       <p className="mb-4 text-xs text-slate-500">
         Operator-safe fields from the backend extension only. No prompt templates, raw
         memory payloads, or chain-of-thought.
@@ -116,6 +100,6 @@ export function AilExecutionExtensionPanel({
           <Field label="Safe error summary" value={opt(ext.safeErrorSummary)} />
         </div>
       </div>
-    </Panel>
+    </OperatorPanel>
   );
 }

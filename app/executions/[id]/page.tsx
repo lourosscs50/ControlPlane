@@ -4,7 +4,9 @@ import { DecisionTable } from "@/components/decisions/DecisionTable";
 import { AdvisoryBadge } from "@/components/operator/AdvisoryBadge";
 import { CopyableId } from "@/components/operator/CopyableId";
 import { TraceIdentifier } from "@/components/operator/TraceIdentifier";
+import { EmptyStateNotice } from "@/components/operator/EmptyStateNotice";
 import { ErrorState } from "@/components/operator/ErrorState";
+import { OperatorPanel } from "@/components/operator/OperatorPanel";
 import { StatusBadge } from "@/components/operator/StatusBadge";
 import type { DecisionVisibilityResponse } from "@/lib/api/decision-visibility";
 import { ChronoFlowApiError, getExecutionById } from "@/lib/api/chronoflow";
@@ -31,23 +33,6 @@ function formatIso(iso: string | null) {
   } catch {
     return iso;
   }
-}
-
-function Panel({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-xl border border-surface-border bg-surface-raised/50 p-5">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {title}
-      </h2>
-      <div className="mt-4">{children}</div>
-    </section>
-  );
 }
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -176,6 +161,7 @@ export default async function ExecutionDetailPage({
 
   const sfCfg = getSignalForgeConfig();
   let relatedDecisions: DecisionVisibilityResponse[] = [];
+  let relatedDecisionsError: unknown = null;
   if (sfCfg.baseUrl && sfCfg.apiToken) {
     try {
       const decPage = await listDecisions({
@@ -184,8 +170,8 @@ export default async function ExecutionDetailPage({
         page: 1,
       });
       relatedDecisions = decPage?.items ?? [];
-    } catch {
-      relatedDecisions = [];
+    } catch (e) {
+      relatedDecisionsError = e;
     }
   }
 
@@ -207,7 +193,7 @@ export default async function ExecutionDetailPage({
       </header>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <Panel title="Overview">
+        <OperatorPanel title="Overview">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               <Link
@@ -246,13 +232,13 @@ export default async function ExecutionDetailPage({
               <Field label="Signal id" value={row.signalId} />
             </div>
           </div>
-        </Panel>
+        </OperatorPanel>
 
-        <Panel title="Timeline">
+        <OperatorPanel title="Timeline">
           <Timeline row={row} />
-        </Panel>
+        </OperatorPanel>
 
-        <Panel title="Suppression">
+        <OperatorPanel title="Suppression">
           {row.wasSuppressed ? (
             <p className="text-sm text-amber-200">
               {row.suppressionReason ?? "Suppressed (no reason text)"}
@@ -260,9 +246,9 @@ export default async function ExecutionDetailPage({
           ) : (
             <p className="text-sm text-slate-500">Not suppressed.</p>
           )}
-        </Panel>
+        </OperatorPanel>
 
-        <Panel title="AIL advisory">
+        <OperatorPanel title="AIL advisory">
           {row.advisoryWasUsed ? (
             <div className="space-y-3">
               <Field
@@ -283,11 +269,11 @@ export default async function ExecutionDetailPage({
               Advisory was not applied for this record.
             </p>
           )}
-        </Panel>
+        </OperatorPanel>
       </div>
 
       <div className="mt-8">
-        <Panel title="A.I.L. execution visibility">
+        <OperatorPanel title="A.I.L. execution visibility">
           <p className="text-sm text-slate-400">
             The ChronoFlow execution id above is <strong className="text-slate-300">not</strong>{" "}
             the A.I.L. execution instance id. Do not infer A.I.L. identifiers from this page.
@@ -312,41 +298,46 @@ export default async function ExecutionDetailPage({
               </code>
             </li>
           </ul>
-        </Panel>
+        </OperatorPanel>
       </div>
 
       <div className="mt-8">
-        <Panel title="Related decisions (SignalForge)">
+        <OperatorPanel title="Related SignalForge decisions" tone="related">
           {!sfCfg.baseUrl ? (
-            <p className="text-sm text-slate-500">
-              Configure{" "}
-              <code className="rounded bg-black/30 px-1">
-                SIGNALFORGE_API_BASE_URL
-              </code>{" "}
-              to load decision visibility.
-            </p>
-          ) : !sfCfg.apiToken ? (
-            <p className="text-sm text-slate-500">
+            <EmptyStateNotice variant="not_configured">
               Set{" "}
-              <code className="rounded bg-black/30 px-1">
-                SIGNALFORGE_API_TOKEN
-              </code>{" "}
-              for{" "}
-              <code className="rounded bg-black/30 px-1">GET /decisions</code>{" "}
-              (filtered by this execution&apos;s alert id).
-            </p>
+              <code className="rounded bg-black/30 px-1">SIGNALFORGE_API_BASE_URL</code> to load
+              decision visibility from SignalForge.
+            </EmptyStateNotice>
+          ) : !sfCfg.apiToken ? (
+            <EmptyStateNotice variant="not_configured">
+              Set{" "}
+              <code className="rounded bg-black/30 px-1">SIGNALFORGE_API_TOKEN</code> for{" "}
+              <code className="rounded bg-black/30 px-1">GET /decisions</code> (filtered by this
+              execution&apos;s alert entity id as <code className="text-amber-100/90">executionId</code>
+              ).
+            </EmptyStateNotice>
+          ) : relatedDecisionsError ? (
+            <EmptyStateNotice variant="source_unavailable">
+              The SignalForge request failed; this is not the same as an empty result set.
+              <span className="mt-2 block font-mono text-xs opacity-90">
+                {String(relatedDecisionsError)}
+              </span>
+            </EmptyStateNotice>
           ) : relatedDecisions.length === 0 ? (
-            <p className="text-sm text-slate-500">
-              No decision visibility rows for alert id{" "}
-              <code className="text-slate-400">{row.alertId}</code>.
-            </p>
+            <EmptyStateNotice variant="no_results_found">
+              No related entities found — SignalForge returned no decision rows for alert id{" "}
+              <code className="text-sky-100/90">{row.alertId}</code> (filter{" "}
+              <code className="text-sky-100/90">executionId</code>). The request succeeded; this is
+              not a configuration or availability failure.
+            </EmptyStateNotice>
           ) : (
             <>
               <p className="mb-4 text-xs text-slate-500">
                 Matched on SignalForge filter{" "}
-                <code className="text-slate-400">executionId</code> = this
-                execution&apos;s <strong className="text-slate-400">alert entity id</strong>{" "}
-                (not ChronoFlow execution id). Summaries only — no prompts or raw payloads.
+                <code className="text-slate-400">executionId</code> = this execution&apos;s{" "}
+                <strong className="text-slate-400">alert entity id</strong> (not ChronoFlow
+                execution id). Summaries only — no prompts or raw payloads.
               </p>
               <DecisionTable
                 rows={relatedDecisions.map((visibility) => ({
@@ -357,13 +348,13 @@ export default async function ExecutionDetailPage({
               />
             </>
           )}
-        </Panel>
+        </OperatorPanel>
       </div>
 
       <div className="mt-8">
-        <Panel title="Diagnostics">
+        <OperatorPanel title="Diagnostics">
           <RawPayload row={row} />
-        </Panel>
+        </OperatorPanel>
       </div>
     </div>
   );
