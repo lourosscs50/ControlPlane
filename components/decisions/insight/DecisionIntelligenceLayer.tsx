@@ -29,11 +29,9 @@ export function DecisionIntelligenceLayer({
       </div>
       <DecisionInfluencesSection influences={vm.influences} />
       <DecisionAlternativesSection alternatives={vm.alternatives} />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <DecisionDebugStatusSection debug={vm.debug} />
-        <DecisionCrossSystemNav links={vm.navigation} />
-      </div>
+      <DecisionDebugStatusSection debug={vm.debug} />
       <DecisionMissingDataPanel items={vm.missing} />
+      <DecisionCrossSystemNav links={vm.navigation} />
     </div>
   );
 }
