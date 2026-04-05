@@ -7,8 +7,9 @@ import {
   signalEntityIdFromDecision,
 } from "@/lib/identifiers/decision-trace";
 import { decisionsListForSignalEntity } from "@/lib/identifiers/signalforge-decisions";
+import type { DecisionTraceSemantics } from "@/lib/operator/decision-trace-semantics";
 
-export type DecisionTraceSemantics = "signalforge" | "ail";
+export type { DecisionTraceSemantics } from "@/lib/operator/decision-trace-semantics";
 
 function Panel({
   title,

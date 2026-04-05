@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { AilExecutionExtensionPanel } from "@/components/decisions/AilExecutionExtensionPanel";
+import { DecisionIntelligenceLayer } from "@/components/decisions/insight/DecisionIntelligenceLayer";
 import { DecisionVisibilityPanels } from "@/components/decisions/DecisionVisibilityPanels";
 import { ErrorState } from "@/components/operator/ErrorState";
 import { getAilExecutionDecisionVisibility } from "@/lib/api/ail";
@@ -85,15 +86,29 @@ export default async function AilExecutionVisibilityPage({ params }: PageProps) 
           {d.decisionCategory} · read-only snapshot from{" "}
           <code className="text-slate-400">GET /executions/{"{id}"}</code>
         </p>
+        <p className="mt-3 max-w-3xl text-xs text-slate-600">
+          Operator intelligence below is read-only: it mirrors the visibility API. Core systems
+          own decisions; A.I.L. advises where wired — ControlPlane does not re-score or reinterpret
+          outcomes.
+        </p>
       </header>
 
-      <DecisionVisibilityPanels d={d} traceSemantics="ail" />
+      <DecisionIntelligenceLayer d={d} traceSemantics="ail" />
 
       {d.executionExtension ? (
         <div className="mt-8">
           <AilExecutionExtensionPanel ext={d.executionExtension} />
         </div>
       ) : null}
+
+      <details className="mt-10 rounded-xl border border-surface-border bg-surface-raised/30">
+        <summary className="cursor-pointer select-none px-5 py-4 text-sm font-medium text-slate-400 hover:text-white">
+          Full visibility record (reference)
+        </summary>
+        <div className="border-t border-surface-border px-5 pb-6">
+          <DecisionVisibilityPanels d={d} traceSemantics="ail" />
+        </div>
+      </details>
 
       {/* Related SignalForge decisions panel */}
       <div className="mt-8">
